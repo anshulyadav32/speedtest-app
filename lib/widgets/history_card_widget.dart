@@ -121,7 +121,7 @@ class HistoryCardWidget extends StatelessWidget {
                       color: themedColor,
                     ),
                     Text(
-                      '$location',
+                      location,
                       style: TextStyle(
                         color: themedColor,
                       ),

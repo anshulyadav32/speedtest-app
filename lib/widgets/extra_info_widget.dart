@@ -20,21 +20,24 @@ class ExtraInfoWidget extends StatelessWidget {
           size: 30,
         ),
         SizedBox(width: 5),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.grey,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                title,
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              subtitle,
-              overflow: TextOverflow.clip,
-              style: TextStyle(fontSize: 15),
-            ),
-          ],
+              Text(
+                subtitle,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 15),
+              ),
+            ],
+          ),
         ),
       ],
     );

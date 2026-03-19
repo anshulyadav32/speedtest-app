@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:speedtest/providers/speed_test_provider.dart';
 import 'package:speedtest/providers/theme_manager.dart';
 import 'package:speedtest/screens/home_screen.dart';
 import 'package:speedtest/services/themes.dart';
@@ -16,13 +17,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ThemeManager(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeManager()),
+        ChangeNotifierProvider(create: (_) => SpeedTestProvider()),
+      ],
       child: Consumer<ThemeManager>(
         builder: (context, themeManager, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Speed Test',
+            title: 'NET Speed Test',
             theme: themeManager.isDark ? darkTheme : lightTheme,
             darkTheme: darkTheme,
             home: HomeScreen(),

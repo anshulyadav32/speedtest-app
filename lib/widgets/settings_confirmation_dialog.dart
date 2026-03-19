@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:speedtest/providers/speed_test_provider.dart';
 import 'package:speedtest/providers/theme_manager.dart';
 
 class SettingsConfirmationDialog extends StatelessWidget {
@@ -36,7 +38,7 @@ class SettingsConfirmationDialog extends StatelessWidget {
             style: TextStyle(fontSize: 20, color: themedColor),
           ),
           onPressed: () {
-//            historyItemList.clear();
+            context.read<SpeedTestProvider>().clearHistory();
             Navigator.pop(context);
           },
         ),

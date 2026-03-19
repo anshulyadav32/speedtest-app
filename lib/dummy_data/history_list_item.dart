@@ -21,6 +21,8 @@ class Items {
   final double upload;
 }
 
+// History is now managed by SpeedTestProvider. This list is kept for
+// backwards-compatible imports but should remain empty.
 List<Items> historyItemList = [
   Items(
     time:

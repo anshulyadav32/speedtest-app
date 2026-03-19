@@ -1,5 +1,6 @@
 name: speedtest
-description: A UI demo for speedtest application.
+description: NET Speed Test - measure your internet download, upload speed and ping.
+version: 1.0.0+1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -16,6 +17,8 @@ dependencies:
   syncfusion_flutter_core: ^31.1.22
   syncfusion_flutter_gauges: ^31.1.22
   url_launcher: ^6.3.1
+  http: ^1.2.0
+  permission_handler: ^12.0.0+1
 
 
 dev_dependencies:

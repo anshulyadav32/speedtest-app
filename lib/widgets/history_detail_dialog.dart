@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:speedtest/dummy_data/history_list_item.dart';
 import 'package:speedtest/providers/theme_manager.dart';
 import 'package:speedtest/widgets/extra_info_widget.dart';
 import 'package:speedtest/widgets/radial_gauge.dart';
@@ -17,14 +16,14 @@ class HistoryDetailDialog extends StatelessWidget {
     required this.upload,
     required this.ip,
     required this.location,
-    required this.index,
+    required this.wifiName,
   });
   final String time;
   final String ip;
   final String location;
+  final String wifiName;
   final IconData networkType;
   final int ping;
-  final int index;
   final double download;
   final double upload;
 
@@ -54,7 +53,7 @@ class HistoryDetailDialog extends StatelessWidget {
                   textTheme: textTheme,
                   themedColor: themedColor,
                   ping: upload,
-                  iconData: FontAwesomeIcons.arrowAltCircleUp,
+                  iconData: FontAwesomeIcons.circleUp,
                   iconColor: Colors.orange.shade700,
                   label: ' Upload',
                   unit: 'Mbps',
@@ -74,7 +73,7 @@ class HistoryDetailDialog extends StatelessWidget {
             ),
             SizedBox(height: size.height * 0.01),
             Expanded(
-              child: Container(
+              child: SizedBox(
                 width: size.width * 0.7,
                 child: Stack(
                   children: <Widget>[
@@ -90,7 +89,8 @@ class HistoryDetailDialog extends StatelessWidget {
                             ),
                             Text(
                               ' Download',
-                              style: (textTheme.titleLarge ?? const TextStyle()).copyWith(
+                              style: (textTheme.titleLarge ?? const TextStyle())
+                                  .copyWith(
                                 fontWeight: FontWeight.w400,
                               ),
                             )
@@ -101,7 +101,9 @@ class HistoryDetailDialog extends StatelessWidget {
                           children: <Widget>[
                             Text(
                               '$download',
-                              style: (textTheme.displaySmall ?? const TextStyle()).copyWith(
+                              style:
+                                  (textTheme.displaySmall ?? const TextStyle())
+                                      .copyWith(
                                 color: themedColor,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -132,12 +134,12 @@ class HistoryDetailDialog extends StatelessWidget {
                 ExtraInfoWidget(
                   iconData: Icons.wifi,
                   title: 'Wifi',
-                  subtitle: '${historyItemList[index].wifiName}',
+                  subtitle: wifiName,
                 ),
                 ExtraInfoWidget(
                   iconData: Icons.router,
                   title: 'IP Address',
-                  subtitle: '$ip',
+                  subtitle: ip,
                 ),
               ],
             ),
@@ -148,12 +150,12 @@ class HistoryDetailDialog extends StatelessWidget {
                 ExtraInfoWidget(
                   iconData: Icons.location_on,
                   title: 'Location',
-                  subtitle: '$location',
+                  subtitle: location,
                 ),
                 ExtraInfoWidget(
                   iconData: Icons.schedule,
                   title: 'Time',
-                  subtitle: '$time',
+                  subtitle: time,
                 ),
               ],
             ),
@@ -217,7 +219,7 @@ class UploadPingWidget extends StatelessWidget {
               color: Colors.red.shade500,
             ),
             Text(
-              '$label',
+              label,
               style: (textTheme.titleLarge ?? const TextStyle())
                   .copyWith(color: themedColor, fontWeight: FontWeight.w400),
             ),
@@ -231,7 +233,7 @@ class UploadPingWidget extends StatelessWidget {
                   .copyWith(color: themedColor, fontWeight: FontWeight.bold),
             ),
             Text(
-              '$unit',
+              unit,
               style: (textTheme.titleLarge ?? const TextStyle())
                   .copyWith(fontWeight: FontWeight.w400, color: themedColor),
             ),

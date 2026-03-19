@@ -15,13 +15,14 @@ class DialogShareCloseButton extends StatelessWidget {
   final VoidCallback onPress;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: size.width * 0.3,
       height: size.height * 0.05,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: Theme.of(context).colorScheme.secondary),
         ),
+        onPressed: onPress,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -30,7 +31,6 @@ class DialogShareCloseButton extends StatelessWidget {
             Text(label),
           ],
         ),
-        onPressed: onPress,
       ),
     );
   }

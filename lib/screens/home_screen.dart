@@ -6,6 +6,8 @@ import 'history_screen.dart';
 import 'speed_test.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
