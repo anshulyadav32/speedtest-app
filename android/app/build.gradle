@@ -66,8 +66,8 @@ android {
 
     defaultConfig {
         applicationId "com.aydigitalcentre.speedest"
-        minSdkVersion flutter.minSdkVersion
-        targetSdk 34
+        minSdkVersion flutter.minSdkVersion  // Android 5.0 — covers 99%+ of active devices
+        targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
