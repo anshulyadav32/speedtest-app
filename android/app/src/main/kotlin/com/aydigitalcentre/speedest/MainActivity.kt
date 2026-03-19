@@ -3,7 +3,9 @@ package com.aydigitalcentre.speedest
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.telephony.TelephonyManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -39,25 +41,33 @@ class MainActivity : FlutterActivity() {
             else -> "none"
         }
 
-        // WiFi SSID
+        // WiFi SSID – use modern API on Android 10+, deprecated fallback for older
         val wifiSsid: String? = if (isWifi) {
             try {
-                @Suppress("DEPRECATION")
-                val wm = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-                @Suppress("DEPRECATION")
-                val ssid = wm.connectionInfo.ssid
-                    ?.removeSurrounding("\"")
-                    ?.takeIf { it.isNotBlank() && it != "<unknown ssid>" }
+                val ssid: String? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    // Android 10+: WifiInfo from NetworkCapabilities (no deprecated API needed)
+                    (caps?.transportInfo as? WifiInfo)?.ssid
+                        ?.removeSurrounding("\"")
+                        ?.takeIf { it.isNotBlank() && it != "<unknown ssid>" }
+                } else {
+                    @Suppress("DEPRECATION")
+                    val wm = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                    @Suppress("DEPRECATION")
+                    wm.connectionInfo.ssid
+                        ?.removeSurrounding("\"")
+                        ?.takeIf { it.isNotBlank() && it != "<unknown ssid>" }
+                }
                 ssid
             } catch (_: Exception) {
                 null
             }
         } else null
 
-        // Mobile operator name – no permission required
+        // Mobile operator name – networkOperatorName first, simOperatorName as fallback
         val operatorName: String? = try {
             val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             tm.networkOperatorName.takeIf { it.isNotBlank() }
+                ?: tm.simOperatorName.takeIf { it.isNotBlank() }
         } catch (_: Exception) {
             null
         }
