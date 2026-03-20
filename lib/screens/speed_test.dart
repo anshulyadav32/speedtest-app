@@ -125,9 +125,15 @@ class SpeedTest extends StatelessWidget {
                     ),
                     Expanded(
                       child: ExtraInfoWidget(
-                        iconData: Icons.location_on,
-                        title: 'Location',
-                        subtitle: 'Your Network',
+                        iconData: provider.integrityStatus == 'certified'
+                            ? Icons.verified_user
+                            : Icons.shield_outlined,
+                        title: 'Device',
+                        subtitle: provider.integrityStatus == 'certified'
+                            ? 'Certified'
+                            : provider.integrityStatus == 'uncertified'
+                                ? 'Not Verified'
+                                : 'Checking...',
                       ),
                     ),
                   ],

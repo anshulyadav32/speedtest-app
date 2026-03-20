@@ -16,3 +16,7 @@
 # Suppress notes about missing classes
 -dontnote io.flutter.**
 -dontwarn io.flutter.embedding.**
+
+# Play Integrity API
+-keep class com.google.android.play.core.integrity.** { *; }
+-dontwarn com.google.android.play.core.**

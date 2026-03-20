@@ -67,7 +67,7 @@ android {
     defaultConfig {
         applicationId "com.aydigitalcentre.speedest"
         minSdkVersion flutter.minSdkVersion  // Android 5.0 — covers 99%+ of active devices
-        targetSdk 35
+        targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -88,4 +88,7 @@ flutter {
     source '../..'
 }
 
+dependencies {
+    implementation 'com.google.android.play:integrity:1.6.0'
+}
 

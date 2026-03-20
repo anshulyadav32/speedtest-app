@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speedtest/dummy_data/history_list_item.dart';
+import 'package:speedtest/services/integrity_service.dart';
 
 enum TestPhase { idle, ping, download, upload, done }
 
@@ -55,6 +55,10 @@ class SpeedTestProvider extends ChangeNotifier {
 
   IconData get networkIcon => isWifi ? Icons.wifi : Icons.signal_cellular_alt;
 
+  // Play Integrity status: null = not checked, 'certified' = OK, 'uncertified' = failed
+  String? _integrityStatus;
+  String? get integrityStatus => _integrityStatus;
+
   static const _pingUrl = 'https://speed.cloudflare.com/__down?bytes=1024';
   // 25 MB for native, 5 MB for web (XHR buffers the whole body — smaller = faster)
   static String get _downloadUrl => kIsWeb
@@ -81,9 +85,10 @@ class SpeedTestProvider extends ChangeNotifier {
       await Permission.locationWhenInUse.request();
     }
 
-    // Fetch public IP and network info concurrently with ping
+    // Fetch public IP, network info, and integrity status concurrently with ping
     _fetchPublicIp();
     _fetchNetworkInfo();
+    _checkIntegrity();
 
     // Ping: measure round-trip latency
     try {
@@ -223,6 +228,12 @@ class SpeedTestProvider extends ChangeNotifier {
         wifiName: _networkName,
       ),
     );
+    notifyListeners();
+  }
+
+  Future<void> _checkIntegrity() async {
+    final token = await IntegrityService.requestToken();
+    _integrityStatus = token != null ? 'certified' : 'uncertified';
     notifyListeners();
   }
 

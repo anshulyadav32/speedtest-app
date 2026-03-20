@@ -7,12 +7,16 @@ import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.telephony.TelephonyManager
+import android.util.Base64
+import com.google.android.play.core.integrity.IntegrityManagerFactory
+import com.google.android.play.core.integrity.IntegrityTokenRequest
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.aydigitalcentre.speedest/network_info"
+    private val INTEGRITY_CHANNEL = "com.aydigitalcentre.speedest/integrity"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -25,6 +29,35 @@ class MainActivity : FlutterActivity() {
                     result.notImplemented()
                 }
             }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, INTEGRITY_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                if (call.method == "requestIntegrityToken") {
+                    requestIntegrityToken(result)
+                } else {
+                    result.notImplemented()
+                }
+            }
+    }
+
+    private fun requestIntegrityToken(result: MethodChannel.Result) {
+        try {
+            val nonceBytes = "speedtest-${applicationContext.packageName}-${System.currentTimeMillis()}"
+                .toByteArray()
+            val nonce = Base64.encodeToString(nonceBytes, Base64.URL_SAFE or Base64.NO_WRAP)
+            val integrityManager = IntegrityManagerFactory.create(applicationContext)
+            integrityManager.requestIntegrityToken(
+                IntegrityTokenRequest.builder()
+                    .setNonce(nonce)
+                    .build()
+            ).addOnSuccessListener { response ->
+                result.success(response.token())
+            }.addOnFailureListener { e ->
+                result.error("INTEGRITY_ERROR", e.message, null)
+            }
+        } catch (e: Exception) {
+            result.error("INTEGRITY_ERROR", e.message, null)
+        }
     }
 
     private fun getNetworkInfo(): Map<String, String?> {
