@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -55,10 +56,13 @@ class SpeedTestProvider extends ChangeNotifier {
   IconData get networkIcon => isWifi ? Icons.wifi : Icons.signal_cellular_alt;
 
   static const _pingUrl = 'https://speed.cloudflare.com/__down?bytes=1024';
-  static const _downloadUrl =
-      'https://speed.cloudflare.com/__down?bytes=25000000';
+  // 25 MB for native, 5 MB for web (XHR buffers the whole body — smaller = faster)
+  static String get _downloadUrl => kIsWeb
+      ? 'https://speed.cloudflare.com/__down?bytes=5000000'
+      : 'https://speed.cloudflare.com/__down?bytes=25000000';
   static const _uploadUrl = 'https://speed.cloudflare.com/__up';
-  static const _ipUrl = 'https://api.ipify.org';
+  // format=json ensures CORS headers are sent by ipify on web
+  static const _ipUrl = 'https://api.ipify.org?format=json';
 
   Future<void> startTest() async {
     if (isTesting) return;
@@ -72,8 +76,10 @@ class SpeedTestProvider extends ChangeNotifier {
     _networkName = '--';
     notifyListeners();
 
-    // Request location permission for WiFi SSID (Android 8+)
-    await Permission.locationWhenInUse.request();
+    // Request location permission for WiFi SSID (Android 8+) — skip on web
+    if (!kIsWeb) {
+      await Permission.locationWhenInUse.request();
+    }
 
     // Fetch public IP and network info concurrently with ping
     _fetchPublicIp();
@@ -90,38 +96,69 @@ class SpeedTestProvider extends ChangeNotifier {
     }
     notifyListeners();
 
-    // Download phase – stream the response and compute running Mbps
+    // Download phase
     _phase = TestPhase.download;
     _gaugeValue = 0;
     notifyListeners();
 
-    try {
-      final request = http.Request('GET', Uri.parse(_downloadUrl));
-      final response = await _client.send(request);
+    if (kIsWeb) {
+      // On web, BrowserClient (XHR) buffers the whole response — no progressive
+      // chunks. Animate the gauge via a timer and measure total time.
+      try {
+        const webDownloadBytes = 5 * 1024 * 1024; // 5 MB
+        final sw = Stopwatch()..start();
+        Timer? timer;
+        timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+          final elapsed = sw.elapsedMilliseconds;
+          if (elapsed > 0) {
+            // estimate based on elapsed — will be corrected on completion
+            final est = (webDownloadBytes * 8) / (elapsed * 1000.0);
+            _gaugeValue = est;
+            notifyListeners();
+          }
+        });
+        final response = await _client.get(Uri.parse(_downloadUrl));
+        sw.stop();
+        timer.cancel();
+        final elapsed = sw.elapsedMilliseconds;
+        if (elapsed > 0 && response.statusCode == 200) {
+          final mbps = (response.bodyBytes.length * 8) / (elapsed * 1000.0);
+          _download = double.parse(mbps.toStringAsFixed(1));
+          _gaugeValue = _download;
+        }
+      } catch (_) {
+        _download = 0;
+      }
+    } else {
+      // Native: stream chunks progressively for live gauge updates
+      try {
+        final request = http.Request('GET', Uri.parse(_downloadUrl));
+        final response = await _client.send(request);
 
-      int bytesReceived = 0;
-      final sw = Stopwatch()..start();
+        int bytesReceived = 0;
+        final sw = Stopwatch()..start();
 
-      await for (final chunk in response.stream) {
-        bytesReceived += chunk.length;
+        await for (final chunk in response.stream) {
+          bytesReceived += chunk.length;
+          final elapsed = sw.elapsedMilliseconds;
+          if (elapsed > 0) {
+            final mbps = (bytesReceived * 8) / (elapsed * 1000.0);
+            _gaugeValue = mbps;
+            _download = double.parse(mbps.toStringAsFixed(1));
+            notifyListeners();
+          }
+        }
+
+        sw.stop();
         final elapsed = sw.elapsedMilliseconds;
         if (elapsed > 0) {
           final mbps = (bytesReceived * 8) / (elapsed * 1000.0);
-          _gaugeValue = mbps;
           _download = double.parse(mbps.toStringAsFixed(1));
-          notifyListeners();
+          _gaugeValue = _download;
         }
+      } catch (_) {
+        _download = 0;
       }
-
-      sw.stop();
-      final elapsed = sw.elapsedMilliseconds;
-      if (elapsed > 0) {
-        final mbps = (bytesReceived * 8) / (elapsed * 1000.0);
-        _download = double.parse(mbps.toStringAsFixed(1));
-        _gaugeValue = _download;
-      }
-    } catch (_) {
-      _download = 0;
     }
     notifyListeners();
 
@@ -190,6 +227,14 @@ class SpeedTestProvider extends ChangeNotifier {
   }
 
   Future<void> _fetchNetworkInfo() async {
+    // On web the MethodChannel is unavailable — use a simple web fallback
+    if (kIsWeb) {
+      _connectionType = 'wifi';
+      _networkName = 'Web Browser';
+      notifyListeners();
+      return;
+    }
+
     try {
       final result = await _networkChannel
           .invokeMapMethod<String, dynamic>('getNetworkInfo');
@@ -215,7 +260,14 @@ class SpeedTestProvider extends ChangeNotifier {
     try {
       final response = await _client.get(Uri.parse(_ipUrl));
       if (response.statusCode == 200) {
-        _publicIp = response.body.trim();
+        final body = response.body.trim();
+        // ipify returns JSON when ?format=json is used: {"ip":"1.2.3.4"}
+        if (body.startsWith('{')) {
+          final ip = RegExp(r'"ip"\s*:\s*"([^"]+)"').firstMatch(body)?.group(1);
+          _publicIp = ip ?? body;
+        } else {
+          _publicIp = body;
+        }
         notifyListeners();
       }
     } catch (_) {
