@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — NET Speed Test</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f5f5f5;
+      color: #212121;
+      line-height: 1.7;
+    }
+    header {
+      background: #E53935;
+      color: #fff;
+      padding: 2rem 1.5rem 1.5rem;
+      text-align: center;
+    }
+    header h1 { font-size: 1.8rem; font-weight: 700; }
+    header p  { margin-top: .4rem; opacity: .9; font-size: .95rem; }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      padding: 2rem 2.5rem;
+    }
+    h2 {
+      font-size: 1.15rem;
+      color: #E53935;
+      margin: 2rem 0 .6rem;
+      padding-bottom: .3rem;
+      border-bottom: 2px solid #fce4e4;
+    }
+    p { margin-bottom: .9rem; }
+    ul { margin: .5rem 0 .9rem 1.4rem; }
+    li { margin-bottom: .35rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: .8rem 0 1.2rem;
+      font-size: .92rem;
+    }
+    th {
+      background: #E53935;
+      color: #fff;
+      padding: .55rem .8rem;
+      text-align: left;
+    }
+    td { padding: .5rem .8rem; border-bottom: 1px solid #eee; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #fafafa; }
+    blockquote {
+      border-left: 4px solid #E53935;
+      padding: .6rem 1rem;
+      background: #fff8f8;
+      border-radius: 0 4px 4px 0;
+      margin: .8rem 0 1.2rem;
+      font-size: .93rem;
+      color: #444;
+    }
+    a { color: #E53935; }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .85rem;
+      color: #888;
+    }
+    @media (max-width: 600px) {
+      main { padding: 1.2rem 1rem; margin: 1rem; }
+      table { font-size: .82rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Privacy Policy</h1>
+  <p>NET Speed Test &nbsp;|&nbsp; Effective Date: March 20, 2026</p>
+</header>
+
+<main>
+
+  <p><strong>Developer:</strong> AY Digital Centre &nbsp;|&nbsp;
+     <strong>Package:</strong> com.aydigitalcentre.speedest &nbsp;|&nbsp;
+     <strong>Contact:</strong> <a href="https://aydigitalcentre.com">aydigitalcentre.com</a></p>
+
+  <h2>1. Overview</h2>
+  <p>NET Speed Test ("the App") is a network speed testing utility. This Privacy Policy explains what information the App accesses, how it is used, and confirms that <strong>no personal data is collected, stored, or shared</strong>.</p>
+
+  <h2>2. Data We Do NOT Collect</h2>
+  <p>The App does <strong>not</strong> collect, store, transmit, or share:</p>
+  <ul>
+    <li>Your name, email address, or any account information</li>
+    <li>Your device identifier, advertising ID, or IMEI</li>
+    <li>Your precise or approximate GPS location coordinates</li>
+    <li>Your browsing history or activity outside the App</li>
+    <li>Any analytics or crash reporting data sent to us or third parties</li>
+  </ul>
+
+  <h2>3. Data Accessed at Runtime</h2>
+  <p>The following data is accessed <strong>only on your device</strong> during a speed test and is <strong>never transmitted to the developer or any third party</strong>:</p>
+  <table>
+    <tr><th>Data</th><th>Purpose</th><th>Stored Remotely?</th></tr>
+    <tr><td>Wi-Fi network name (SSID)</td><td>Displayed in the Network tile so you know which network was tested</td><td>No</td></tr>
+    <tr><td>Mobile operator name</td><td>Displayed in the Network tile when on cellular</td><td>No</td></tr>
+    <tr><td>Connection type (Wi-Fi / Mobile)</td><td>Used to show the correct icon</td><td>No</td></tr>
+    <tr><td>Public IP address</td><td>Fetched from api.ipify.org and displayed on screen only</td><td>No</td></tr>
+    <tr><td>Speed test results (download, upload, ping)</td><td>Saved locally on your device in Shared Preferences for the History tab</td><td>No</td></tr>
+  </table>
+  <p>All speed test results stored in History are stored <strong>locally on your device only</strong> and can be deleted at any time from the Settings screen.</p>
+
+  <h2>4. Permissions Explained</h2>
+  <table>
+    <tr><th>Android Permission</th><th>Why It Is Needed</th></tr>
+    <tr><td>INTERNET</td><td>To connect to Cloudflare speed test servers and fetch your public IP</td></tr>
+    <tr><td>ACCESS_NETWORK_STATE</td><td>To detect whether you are on Wi-Fi or mobile data</td></tr>
+    <tr><td>ACCESS_WIFI_STATE</td><td>To read Wi-Fi connection information</td></tr>
+    <tr><td>ACCESS_COARSE_LOCATION</td><td>Required by Android OS to read Wi-Fi network name</td></tr>
+    <tr><td>ACCESS_FINE_LOCATION</td><td>Required on Android 8.0+ to read the Wi-Fi SSID</td></tr>
+  </table>
+  <blockquote>
+    <strong>Important:</strong> Location permissions are used <strong>solely</strong> to display the name of the connected Wi-Fi network on screen. The App never reads your GPS coordinates, never tracks your physical location, and never shares location data with anyone.
+  </blockquote>
+
+  <h2>5. Third-Party Services</h2>
+  <p>The App communicates with the following external services <strong>only during a speed test</strong>:</p>
+  <table>
+    <tr><th>Service</th><th>URL</th><th>Data Sent</th><th>Purpose</th></tr>
+    <tr><td>Cloudflare Speed Test</td><td>speed.cloudflare.com</td><td>HTTP download/upload traffic</td><td>Measure download/upload speed and ping</td></tr>
+    <tr><td>ipify</td><td>api.ipify.org</td><td>Your IP address (inherent to any HTTP request)</td><td>Display your public IP address</td></tr>
+  </table>
+  <p>These services are operated by their respective owners. The App does not send any personal identifiers to them. Please review their privacy policies:
+    <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare Privacy Policy</a> &nbsp;|&nbsp;
+    <a href="https://www.ipify.org/">ipify Privacy Policy</a>
+  </p>
+
+  <h2>6. Children's Privacy</h2>
+  <p>The App does not knowingly collect any information from children under the age of 13. The App contains no user accounts, registration, or social features.</p>
+
+  <h2>7. Data Security</h2>
+  <p>Because the App does not transmit or store personal data on any remote server, there is no risk of a data breach involving your personal information. Speed test results stored locally are protected by your device's built-in security.</p>
+
+  <h2>8. Changes to This Policy</h2>
+  <p>We may update this Privacy Policy from time to time. Any changes will be reflected by updating the <strong>Effective Date</strong> at the top of this document. Continued use of the App after changes constitutes acceptance of the updated policy.</p>
+
+  <h2>9. Contact Us</h2>
+  <p>If you have any questions about this Privacy Policy, please contact us:</p>
+  <p><strong>AY Digital Centre</strong><br>
+     Website: <a href="https://aydigitalcentre.com">https://aydigitalcentre.com</a></p>
+
+</main>
+
+<footer>
+  &copy; 2026 AY Digital Centre &nbsp;|&nbsp; NET Speed Test
+</footer>
+
+</body>
+</html>
