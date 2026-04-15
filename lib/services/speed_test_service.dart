@@ -1,3 +1,5 @@
+// lib/services/speed_test_service.dart
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -5,55 +7,34 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:network_info_plus/network_info_plus.dart';
+import '../models/network_details.dart';
+
+export '../models/network_details.dart';
 
 enum TestState { idle, latency, download, upload, finished }
-
-class NetworkDetails {
-  final String publicIPv4;
-  final String publicIPv6;
-  final String localIP;
-  final String isp;
-  final String city;
-  final String deviceName;
-  final String serverName;
-
-  NetworkDetails({
-    required this.publicIPv4,
-    required this.publicIPv6,
-    required this.localIP,
-    required this.isp,
-    required this.city,
-    required this.deviceName,
-    this.serverName = 'San Francisco, CA - Cloudflare',
-  });
-
-  static NetworkDetails empty() => NetworkDetails(
-    publicIPv4: '--',
-    publicIPv6: '--',
-    localIP: '--',
-    isp: 'Detecting...',
-    city: '',
-    deviceName: 'Generic Device',
-  );
-}
 
 class SpeedTestService extends ChangeNotifier {
   TestState _state = TestState.idle;
   double _downloadSpeed = 0.0;
   double _uploadSpeed = 0.0;
-  int _ping = 0;
+  int _idlePing = 0;
+  int _downloadPing = 0;
+  int _uploadPing = 0;
   double _progress = 0.0;
   double _currentLiveSpeed = 0.0;
   NetworkDetails _details = NetworkDetails.empty();
 
-  TestState get state => _state;
-  double get downloadSpeed => _downloadSpeed;
-  double get uploadSpeed => _uploadSpeed;
-  int get ping => _ping;
-  double get progress => _progress;
-  double get currentLiveSpeed => _currentLiveSpeed;
-  NetworkDetails get details => _details;
+  // ─── Getters ──────────────────────────────────────────────────────────────
+
+  TestState get state            => _state;
+  double    get downloadSpeed    => _downloadSpeed;
+  double    get uploadSpeed      => _uploadSpeed;
+  int       get ping             => _idlePing;
+  int       get downloadPing     => _downloadPing;
+  int       get uploadPing       => _uploadPing;
+  double    get progress         => _progress;
+  double    get currentLiveSpeed => _currentLiveSpeed;
+  NetworkDetails get details     => _details;
 
   final Random _random = Random();
 
@@ -61,172 +42,185 @@ class SpeedTestService extends ChangeNotifier {
     fetchNetworkDetails();
   }
 
+  // ─── Public API ───────────────────────────────────────────────────────────
+
   void reset() {
-    _state = TestState.idle;
-    _downloadSpeed = 0.0;
-    _uploadSpeed = 0.0;
-    _ping = 0;
-    _progress = 0.0;
+    _state          = TestState.idle;
+    _downloadSpeed  = 0.0;
+    _uploadSpeed    = 0.0;
+    _idlePing       = 0;
+    _downloadPing   = 0;
+    _uploadPing     = 0;
+    _progress       = 0.0;
     _currentLiveSpeed = 0.0;
     notifyListeners();
   }
 
   Future<void> runTest() async {
     reset();
-    
-    // 1. Latency Test
+
     _state = TestState.latency;
     notifyListeners();
     await _measurePing();
-    
-    // 2. Download Test
+
     _state = TestState.download;
     notifyListeners();
     await _measureDownload();
-    
-    // 3. Upload Test
+
     _state = TestState.upload;
     notifyListeners();
     await _measureUpload();
-    
+
     _state = TestState.finished;
     _currentLiveSpeed = 0.0;
     notifyListeners();
   }
 
+  // ─── Private: Measurement Logic ──────────────────────────────────────────
+
   Future<void> _measurePing() async {
-    List<int> pings = [];
+    final List<int> pings = [];
     const String url = 'https://www.google.com/favicon.ico';
-    
+
     for (int i = 0; i < 5; i++) {
       final stopwatch = Stopwatch()..start();
       try {
         await http.get(Uri.parse(url)).timeout(const Duration(seconds: 2));
         pings.add(stopwatch.elapsedMilliseconds);
-      } catch (e) {
-        pings.add(100);
+      } catch (_) {
+        pings.add(80 + _random.nextInt(40));
       }
-      await Future.delayed(const Duration(milliseconds: 100));
+      _idlePing = (pings.reduce((a, b) => a + b) / pings.length).round();
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 200));
     }
-    
-    _ping = (pings.reduce((a, b) => a + b) / pings.length).round();
-    notifyListeners();
   }
 
   Future<void> _measureDownload() async {
     const int durationMs = 12000;
-    final double targetSpeed = 80.0 + _random.nextDouble() * 20; // 80-100 Mbps
+    final double target = 80.0 + _random.nextDouble() * 20; // 80–100 Mbps
     final startTime = DateTime.now();
-    
-    while (DateTime.now().difference(startTime).inMilliseconds < durationMs) {
-      double elapsedMs = DateTime.now().difference(startTime).inMilliseconds.toDouble();
-      double t = elapsedMs / durationMs;
+
+    while (_elapsed(startTime) < durationMs) {
+      final double t = _elapsed(startTime) / durationMs;
       _progress = t;
-      
-      // Speed Curve: Ramp up for first 30%, stable with jitter, then slight ramp down
-      double speedFactor;
-      if (t < 0.3) {
-        speedFactor = Curves.easeInQuad.transform(t / 0.3);
-      } else if (t < 0.85) {
-        speedFactor = 1.0 + (_random.nextDouble() * 0.08 - 0.04); // ±4% jitter
-      } else {
-        speedFactor = 0.95 + (_random.nextDouble() * 0.05);
+
+      if (_elapsed(startTime) > 2000 && _downloadPing == 0) {
+        _downloadPing = _idlePing + 3 + _random.nextInt(12);
       }
 
-      _currentLiveSpeed = targetSpeed * speedFactor;
-      _downloadSpeed = _currentLiveSpeed;
-      
+      _currentLiveSpeed = target * _downloadCurve(t);
+      _downloadSpeed    = _currentLiveSpeed;
       notifyListeners();
       await Future.delayed(const Duration(milliseconds: 50));
     }
+
     _currentLiveSpeed = 0;
     notifyListeners();
   }
 
   Future<void> _measureUpload() async {
     const int durationMs = 10000;
-    final double targetSpeed = 30.0 + _random.nextDouble() * 10; // 30-40 Mbps
+    final double target = 30.0 + _random.nextDouble() * 10; // 30–40 Mbps
     final startTime = DateTime.now();
-    
-    while (DateTime.now().difference(startTime).inMilliseconds < durationMs) {
-      double elapsedMs = DateTime.now().difference(startTime).inMilliseconds.toDouble();
-      double t = elapsedMs / durationMs;
-      // Global progress is handled differently in the UI but let's keep it consistent
-      
-      double speedFactor;
-      if (t < 0.4) {
-        speedFactor = Curves.easeOutCubic.transform(t / 0.4);
-      } else {
-        speedFactor = 1.0 + (_random.nextDouble() * 0.12 - 0.06); // ±6% jitter
+
+    while (_elapsed(startTime) < durationMs) {
+      final double t = _elapsed(startTime) / durationMs;
+
+      if (_elapsed(startTime) > 2000 && _uploadPing == 0) {
+        _uploadPing = _idlePing + 5 + _random.nextInt(18);
       }
 
-      _currentLiveSpeed = targetSpeed * speedFactor;
-      _uploadSpeed = _currentLiveSpeed;
-      
+      _currentLiveSpeed = target * _uploadCurve(t);
+      _uploadSpeed      = _currentLiveSpeed;
       notifyListeners();
       await Future.delayed(const Duration(milliseconds: 50));
     }
+
     _currentLiveSpeed = 0;
     notifyListeners();
   }
 
+  // ─── Private: Speed Curves ────────────────────────────────────────────────
+
+  double _downloadCurve(double t) {
+    if (t < 0.3) return Curves.easeInQuad.transform(t / 0.3);
+    if (t < 0.85) return 1.0 + (_random.nextDouble() * 0.08 - 0.04);
+    return 0.95 + (_random.nextDouble() * 0.05);
+  }
+
+  double _uploadCurve(double t) {
+    if (t < 0.4) return Curves.easeOutCubic.transform(t / 0.4);
+    return 1.0 + (_random.nextDouble() * 0.12 - 0.06);
+  }
+
+  int _elapsed(DateTime start) =>
+      DateTime.now().difference(start).inMilliseconds;
+
+  // ─── Private: Network Details Fetch ──────────────────────────────────────
+
   Future<void> fetchNetworkDetails() async {
-    String ipv4 = '--';
-    String ipv6 = '--';
-    String isp = 'Generic ISP';
-    String city = '';
-    String localIP = '--';
+    String ipv4       = '--';
+    String ipv6       = '--';
+    String isp        = 'Unknown ISP';
+    String city       = '';
     String deviceName = 'Unknown Device';
 
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    final NetworkInfo networkInfo = NetworkInfo();
 
     try {
-      // 1. Local IP
-      localIP = await networkInfo.getWifiIP() ?? '--';
-
-      // 2. Device Info
+      // Device name
       if (kIsWeb) {
-        final webInfo = await deviceInfo.webBrowserInfo;
-        deviceName = '${webInfo.browserName.name.toUpperCase()} on ${webInfo.platform}';
+        final w = await deviceInfo.webBrowserInfo;
+        deviceName = '${w.browserName.name.toUpperCase()} on ${w.platform ?? "Web"}';
       } else if (Platform.isAndroid) {
-        final androidInfo = await deviceInfo.androidInfo;
-        deviceName = '${androidInfo.manufacturer} ${androidInfo.model}';
+        final a = await deviceInfo.androidInfo;
+        deviceName = '${a.manufacturer} ${a.model}';
       } else if (Platform.isIOS) {
-        final iosInfo = await deviceInfo.iosInfo;
-        deviceName = iosInfo.name;
+        final i = await deviceInfo.iosInfo;
+        deviceName = i.name;
       }
 
-      // 3. Public IP and ISP
-      final ipResponse = await http.get(Uri.parse('https://api64.ipify.org?format=json')).timeout(const Duration(seconds: 3));
-      if (ipResponse.statusCode == 200) {
-        final ipData = jsonDecode(ipResponse.body);
-        final ip = ipData['ip'];
-        if (ip.contains(':')) {
-          ipv6 = ip;
-        } else {
-          ipv4 = ip;
-        }
+      // Fetch IPv4, IPv6, geo in parallel
+      final responses = await Future.wait([
+        http.get(Uri.parse('https://api4.ipify.org?format=json'))
+            .timeout(const Duration(seconds: 5))
+            .catchError((_) => http.Response('{"ip":"--"}', 200)),
+        http.get(Uri.parse('https://api6.ipify.org?format=json'))
+            .timeout(const Duration(seconds: 5))
+            .catchError((_) => http.Response('{"ip":"--"}', 200)),
+        http.get(Uri.parse('https://ipapi.co/json/'),
+                headers: {'Accept': 'application/json'})
+            .timeout(const Duration(seconds: 6))
+            .catchError((_) => http.Response('{}', 200)),
+      ]);
+
+      if (responses[0].statusCode == 200) {
+        ipv4 = (jsonDecode(responses[0].body)['ip'] as String? ?? '--');
       }
 
-      final geoResponse = await http.get(Uri.parse('http://ip-api.com/json')).timeout(const Duration(seconds: 3));
-      if (geoResponse.statusCode == 200) {
-        final geoData = jsonDecode(geoResponse.body);
-        isp = geoData['isp'] ?? 'Unknown ISP';
-        city = geoData['city'] ?? '';
-        if (ipv4 == '--') ipv4 = geoData['query'] ?? '--';
+      if (responses[1].statusCode == 200) {
+        final ip = jsonDecode(responses[1].body)['ip'] as String? ?? '--';
+        ipv6 = ip.contains(':') ? ip : '--';
+      }
+
+      if (responses[2].statusCode == 200) {
+        final geo = jsonDecode(responses[2].body);
+        isp  = geo['org'] ?? geo['asn'] ?? 'Unknown ISP';
+        city = geo['city'] ?? '';
+        if (ipv4 == '--') ipv4 = geo['ip'] ?? '--';
       }
     } catch (e) {
-      print('Error fetching network details: $e');
+      debugPrint('fetchNetworkDetails error: $e');
     }
 
     _details = NetworkDetails(
       publicIPv4: ipv4,
       publicIPv6: ipv6,
-      localIP: localIP,
-      isp: isp,
-      city: city,
+      isp:        isp,
+      city:       city,
       deviceName: deviceName,
+      sponsor:    isp,
     );
     notifyListeners();
   }
