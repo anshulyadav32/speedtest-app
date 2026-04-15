@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedtest by Ookla Replication</title>
+    <meta name="description" content="A high-fidelity replication of speedtest.net measuring your internet speed.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5C11.7157 5 5 11.7157 5 20C5 28.2843 11.7157 35 20 35C28.2843 35 35 28.2843 35 20" stroke="#00e5ff" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M20 20L32 12" stroke="#00e5ff" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <span>SPEEDTEST<sup>®</sup></span>
+            </div>
+            <nav>
+                <a href="#">APPS</a>
+                <a href="#">ANALYSIS</a>
+                <a href="#">NETWORK</a>
+                <a href="#">DEVELOPERS</a>
+                <a href="#">ENTERPRISE</a>
+                <a href="#" class="more">...</a>
+            </nav>
+            <div class="user-actions">
+                <a href="#">LOG IN</a>
+                <a href="#">CREATE ACCOUNT</a>
+                <button class="menu-btn">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="test-container" id="speedtest-app">
+            <div class="test-initial" id="initial-state">
+                <button id="go-button">
+                    <div class="go-circle">
+                        <span>GO</span>
+                    </div>
+                </button>
+                <div class="server-info">
+                    <div class="info-block">
+                        <span class="label">CONNECTIONS</span>
+                        <span class="value">Multi</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="info-block">
+                        <span class="label">SERVER</span>
+                        <span class="value" id="server-location">Detecting...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-running hidden" id="running-state">
+                <div class="metrics-grid">
+                    <div class="metric" id="ping-metric">
+                        <span class="label">PING <small>ms</small></span>
+                        <span class="value">--</span>
+                        <div class="sub-metrics">
+                            <span>Idle <em id="idle-ping">--</em></span>
+                            <span>Download <em id="download-ping">--</em></span>
+                            <span>Upload <em id="upload-ping">--</em></span>
+                        </div>
+                    </div>
+                    <div class="metric highlight" id="download-metric">
+                        <span class="label">DOWNLOAD <small>Mbps</small></span>
+                        <span class="value">0.00</span>
+                    </div>
+                    <div class="metric" id="upload-metric">
+                        <span class="label">UPLOAD <small>Mbps</small></span>
+                        <span class="value">0.00</span>
+                    </div>
+                </div>
+
+                <div class="gauge-container">
+                    <svg class="gauge" viewBox="0 0 200 120">
+                        <!-- Background path -->
+                        <path d="M20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#22223a" stroke-width="12" stroke-linecap="round"/>
+                        <!-- Progress path -->
+                        <path id="gauge-progress" d="M20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gauge-gradient)" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.32" stroke-dashoffset="251.32"/>
+                        
+                        <!-- Needle -->
+                        <line id="needle" x1="100" y1="100" x2="100" y2="30" stroke="#00e5ff" stroke-width="3" stroke-linecap="round" />
+                        <circle cx="100" cy="100" r="5" fill="#00e5ff" />
+
+                        <defs>
+                            <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#0066ff" />
+                                <stop offset="100%" stop-color="#00e5ff" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="speed-display">
+                        <span id="live-speed">0.00</span>
+                        <small>Mbps</small>
+                    </div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="overall-progress"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-container hidden" id="results-state">
+            <!-- Results will be populated by JS -->
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Replication Project. Speedtest<sup>®</sup> is a registered trademark of Ookla, LLC and is used here for replication demonstration purposes.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
