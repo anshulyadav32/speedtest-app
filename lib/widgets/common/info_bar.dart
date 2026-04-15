@@ -63,6 +63,19 @@ class InfoBar extends StatelessWidget {
             icon: Icons.router_rounded,
             mono: true,
           ),
+          _sep(),
+          InfoBarTile(
+            label: 'PRIVATE IP',
+            value: details.privateIP != '--' ? details.privateIP : '—',
+            icon: Icons.lock_rounded,
+            mono: true,
+          ),
+          _sep(),
+          InfoBarTile(
+            label: 'TEST SERVER',
+            value: details.isDetected ? details.serverName : '—',
+            icon: Icons.speed_rounded,
+          ),
         ],
       ),
     );

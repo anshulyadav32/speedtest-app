@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import '../models/network_details.dart';
 
 export '../models/network_details.dart';
@@ -162,8 +163,10 @@ class SpeedTestService extends ChangeNotifier {
   Future<void> fetchNetworkDetails() async {
     String ipv4       = '--';
     String ipv6       = '--';
+    String privateIP  = '--';
     String isp        = 'Unknown ISP';
     String city       = '';
+    String serverName = 'Speedtest Server';
     String deviceName = 'Unknown Device';
 
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -179,6 +182,16 @@ class SpeedTestService extends ChangeNotifier {
       } else if (Platform.isIOS) {
         final i = await deviceInfo.iosInfo;
         deviceName = i.name;
+      }
+
+      // Private/local IP (only available on native platforms)
+      if (!kIsWeb) {
+        try {
+          final networkInfo = NetworkInfo();
+          privateIP = await networkInfo.getWifiIP() ?? '--';
+        } catch (_) {
+          privateIP = '--';
+        }
       }
 
       // Fetch IPv4, IPv6, geo in parallel
@@ -206,21 +219,28 @@ class SpeedTestService extends ChangeNotifier {
 
       if (responses[2].statusCode == 200) {
         final geo = jsonDecode(responses[2].body);
-        isp  = geo['org'] ?? geo['asn'] ?? 'Unknown ISP';
-        city = geo['city'] ?? '';
+        isp        = geo['org'] ?? geo['asn'] ?? 'Unknown ISP';
+        city       = geo['city'] ?? '';
+        // Derive a human-readable server name from org + city
+        final org  = (geo['org'] as String? ?? '').replaceAll(RegExp(r'^AS\d+\s*'), '');
+        serverName = org.isNotEmpty
+            ? '$org${city.isNotEmpty ? " - $city" : ""}'
+            : 'Speedtest Server';
         if (ipv4 == '--') ipv4 = geo['ip'] ?? '--';
       }
     } catch (e) {
-      debugPrint('fetchNetworkDetails error: $e');
+      debugPrint('fetchNetworkDetails error: \$e');
     }
 
     _details = NetworkDetails(
       publicIPv4: ipv4,
       publicIPv6: ipv6,
+      privateIP:  privateIP,
       isp:        isp,
       city:       city,
       deviceName: deviceName,
       sponsor:    isp,
+      serverName: serverName,
     );
     notifyListeners();
   }
