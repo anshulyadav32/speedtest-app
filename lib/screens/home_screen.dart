@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 import '../core/constants/app_colors.dart';
 import '../services/speed_test_service.dart';
 import '../widgets/common/info_bar.dart';
+import '../widgets/common/footer.dart';
 import '../widgets/idle/go_button.dart';
 import '../widgets/running/running_view.dart';
 import '../widgets/results/results_view.dart';
+import 'info_pages.dart';
 
 /// Thin coordinator: owns the pulse animation and delegates each
 /// screen state to its own dedicated widget.
@@ -42,6 +44,15 @@ class _HomeScreenState extends State<HomeScreen>
     super.dispose();
   }
 
+  void _navigateToInfo(String title, String content) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InfoPage(title: title, content: content),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +70,11 @@ class _HomeScreenState extends State<HomeScreen>
                       FadeTransition(opacity: animation, child: child),
                   child: _buildBody(service),
                 ),
+              ),
+              AppFooter(
+                onAboutTap: () => _navigateToInfo('ABOUT', InfoPages.about),
+                onPrivacyTap: () => _navigateToInfo('PRIVACY POLICY', InfoPages.privacyPolicy),
+                onTermsTap: () => _navigateToInfo('TERMS & CONDITIONS', InfoPages.termsConditions),
               ),
             ],
           );
