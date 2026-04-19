@@ -1,41 +1,114 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 
+// ─── Data Models ─────────────────────────────────────────────────────────────
+
+class _Section {
+  final String heading;
+  final String body;
+  const _Section(this.heading, this.body);
+}
+
+// ─── Generic Info Page ────────────────────────────────────────────────────────
+
 class InfoPage extends StatelessWidget {
   final String title;
-  final String content;
+  final String subtitle;
+  final IconData icon;
+  final Color accentColor;
+  final List<_Section> sections;
 
-  const InfoPage({super.key, required this.title, required this.content});
+  const InfoPage({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.accentColor,
+    required this.sections,
+    // kept for backward compat (ignored)
+    String? content,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.5,
-            color: AppColors.textPrimary,
-            fontSize: 18,
+      body: CustomScrollView(
+        slivers: [
+          _buildHeader(context),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (ctx, i) => _SectionCard(section: sections[i], accent: accentColor),
+                childCount: sections.length,
+              ),
+            ),
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Text(
-          content,
-          style: TextStyle(
-            color: AppColors.textSecondary.withOpacity(0.8),
-            fontSize: 14,
-            height: 1.6,
+    );
+  }
+
+  SliverAppBar _buildHeader(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 180,
+      pinned: true,
+      backgroundColor: AppColors.background,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary, size: 20),
+        onPressed: () => Navigator.pop(context),
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                accentColor.withOpacity(0.15),
+                AppColors.background,
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 48, 24, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: accentColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: accentColor.withOpacity(0.3)),
+                    ),
+                    child: Icon(icon, color: accentColor, size: 24),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: AppColors.textSecondary.withOpacity(0.6),
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -43,48 +116,165 @@ class InfoPage extends StatelessWidget {
   }
 }
 
+class _SectionCard extends StatelessWidget {
+  final _Section section;
+  final Color accent;
+
+  const _SectionCard({required this.section, required this.accent});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.07)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 3,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: accent,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    section.heading,
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              section.body,
+              style: TextStyle(
+                color: AppColors.textSecondary.withOpacity(0.8),
+                fontSize: 14,
+                height: 1.7,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Page Content ─────────────────────────────────────────────────────────────
+
 class InfoPages {
-  static const String about = """
-NETSPEED is a high-fidelity speed test application built with Flutter. It provides accurate measurements of your internet connection's ping, download, and upload speeds.
+  // ── About ──────────────────────────────────────────────────────────────────
+  static InfoPage aboutPage() => InfoPage(
+        title: 'ABOUT',
+        subtitle: 'NETSPEED — KNOW YOUR CONNECTION',
+        icon: Icons.bolt_rounded,
+        accentColor: AppColors.cyan,
+        sections: const [
+          _Section(
+            'WHAT IS NETSPEED?',
+            'NETSPEED is a high-fidelity internet speed test application built with Flutter. It provides accurate, real-time measurements of your connection\'s latency, download speed, and upload speed — beautifully visualized.',
+          ),
+          _Section(
+            'HOW IT WORKS',
+            'NETSPEED measures your idle ping by timing round-trips to reference servers. Download and upload speeds are calculated by transferring test payloads and measuring throughput over a consistent duration.',
+          ),
+          _Section(
+            'OUR MISSION',
+            'We believe everyone deserves transparent insight into their digital connectivity. NETSPEED is designed to give you professional-grade network diagnostics in a clean, accessible interface — no clutter, no subscriptions.',
+          ),
+          _Section(
+            'TECHNOLOGY',
+            'Built with Flutter for cross-platform performance. Public IP detection via ipify.org. ISP & geolocation via ipapi.co. Local IP detection via WebRTC on web and native network APIs on Android/iOS.',
+          ),
+        ],
+      );
 
-Designed for performance and aesthetics, NETSPEED replicates the experience of professional network diagnostic tools with a modern, reactive interface.
+  // ── Privacy Policy ─────────────────────────────────────────────────────────
+  static InfoPage privacyPage() => InfoPage(
+        title: 'PRIVACY POLICY',
+        subtitle: 'LAST UPDATED: APRIL 2025',
+        icon: Icons.shield_rounded,
+        accentColor: const Color(0xFF00C853),
+        sections: const [
+          _Section(
+            'OUR COMMITMENT',
+            'At NETSPEED, your privacy is a priority. This policy explains what data is processed when you use the app and how it is handled.',
+          ),
+          _Section(
+            '1. DATA WE PROCESS',
+            'To perform a speed test, we process your public IP address, ISP name, approximate city/region, and connection metrics (ping, download speed, upload speed). We do not collect your name, email, or any personal identifiers.',
+          ),
+          _Section(
+            '2. HOW DATA IS USED',
+            'Network data is used exclusively to calculate your connection speed and display relevant server and location information. No data is stored on our servers after your session ends.',
+          ),
+          _Section(
+            '3. THIRD-PARTY SERVICES',
+            'We use ipify.org for public IP detection and ipapi.co for geolocation. These services have their own privacy policies. We do not sell, rent, or share your data with advertisers or data brokers.',
+          ),
+          _Section(
+            '4. LOCAL STORAGE & COOKIES',
+            'This application may use browser local storage to remember your display preferences. No tracking cookies or analytics SDKs are used.',
+          ),
+          _Section(
+            '5. YOUR RIGHTS',
+            'Since we do not store personal data, there is no profile to delete. If you have questions about data handling, contact us at support@netspeed.app.',
+          ),
+        ],
+      );
 
-Our mission is to provide users with transparent and reliable network insights, helping them understand their digital connectivity better.
-""";
+  // ── Terms & Conditions ─────────────────────────────────────────────────────
+  static InfoPage termsPage() => InfoPage(
+        title: 'TERMS & CONDITIONS',
+        subtitle: 'LAST UPDATED: APRIL 2025',
+        icon: Icons.gavel_rounded,
+        accentColor: const Color(0xFFFF6D00),
+        sections: const [
+          _Section(
+            'AGREEMENT',
+            'By accessing or using NETSPEED, you agree to be bound by these Terms. If you do not agree, please discontinue use of the application immediately.',
+          ),
+          _Section(
+            '1. SERVICE USAGE',
+            'NETSPEED is provided "as is" for personal, non-commercial use. Speed measurements are indicative and may be affected by device capabilities, network congestion, and other external factors outside our control.',
+          ),
+          _Section(
+            '2. ACCURACY DISCLAIMER',
+            'Results displayed are estimates based on test conditions at the time of measurement. NETSPEED does not guarantee that results reflect the maximum or average performance of your internet plan.',
+          ),
+          _Section(
+            '3. PROHIBITED CONDUCT',
+            'You may not: (a) use automated tools to scrape or stress-test our infrastructure; (b) attempt to reverse-engineer the application; (c) use the service for any unlawful purpose or in violation of any regulations.',
+          ),
+          _Section(
+            '4. LIMITATION OF LIABILITY',
+            'To the fullest extent permitted by law, NETSPEED and its developers shall not be liable for any indirect, incidental, or consequential damages arising from use or inability to use this service.',
+          ),
+          _Section(
+            '5. CHANGES TO TERMS',
+            'We reserve the right to modify these Terms at any time. Changes will be reflected by the "Last Updated" date. Continued use of the service after changes constitutes your acceptance of the revised Terms.',
+          ),
+        ],
+      );
 
-  static const String privacyPolicy = """
-Last Updated: April 2024
-
-At NETSPEED, we take your privacy seriously. This policy explains how we handle your data.
-
-1. DATA COLLECTION
-We do not collect personal identification information. We only process network data (IP address, ISP, and connection metrics) necessary to perform the speed test.
-
-2. USAGE
-Network data is used solely to calculate your connection speed and provide you with local server information.
-
-3. THIRD PARTIES
-We do not sell or share your data with third parties. All tests are performed directly between your device and our testing infrastructure.
-
-4. COOKIES
-This web application may use local storage to remember your preferences but does not use tracking cookies.
-""";
-
-  static const String termsConditions = """
-Last Updated: April 2024
-
-By using NETSPEED, you agree to the following terms:
-
-1. SERVICE USAGE
-NETSPEED is provided "as is" for personal, non-commercial use. We do not guarantee 100% accuracy of measurements as they can be affected by various external factors.
-
-2. PROHIBITED ACTIONS
-Users may not attempt to reverse engineer, scrape, or perform automated tests against our infrastructure without explicit permission.
-
-3. LIMITATION OF LIABILITY
-NETSPEED shall not be liable for any damages arising from the use or inability to use this service.
-
-4. CHANGES
-We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of the new terms.
-""";
+  // ── Legacy string constants (kept for backward compat) ────────────────────
+  static const String about = '';
+  static const String privacyPolicy = '';
+  static const String termsConditions = '';
 }

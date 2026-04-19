@@ -44,11 +44,16 @@ class _HomeScreenState extends State<HomeScreen>
     super.dispose();
   }
 
-  void _navigateToInfo(String title, String content) {
+  void _navigateToInfo(InfoPage page) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => InfoPage(title: title, content: content),
+      PageRouteBuilder(
+        pageBuilder: (_, animation, __) => page,
+        transitionsBuilder: (_, animation, __, child) => FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+        transitionDuration: const Duration(milliseconds: 300),
       ),
     );
   }
@@ -72,9 +77,9 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
               AppFooter(
-                onAboutTap: () => _navigateToInfo('ABOUT', InfoPages.about),
-                onPrivacyTap: () => _navigateToInfo('PRIVACY POLICY', InfoPages.privacyPolicy),
-                onTermsTap: () => _navigateToInfo('TERMS & CONDITIONS', InfoPages.termsConditions),
+                onAboutTap: () => _navigateToInfo(InfoPages.aboutPage()),
+                onPrivacyTap: () => _navigateToInfo(InfoPages.privacyPage()),
+                onTermsTap: () => _navigateToInfo(InfoPages.termsPage()),
               ),
             ],
           );
