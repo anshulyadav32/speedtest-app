@@ -1,0 +1,22 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - curl -s https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.29.2-stable.tar.xz -o flutter.tar.xz
+        - tar xf flutter.tar.xz
+        - export PATH="$PWD/flutter/bin:$PATH"
+        - flutter --version
+        - flutter pub get
+    build:
+      commands:
+        - export PATH="$PWD/flutter/bin:$PATH"
+        - flutter build web --release
+  artifacts:
+    baseDirectory: build/web
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - flutter/bin/cache/**/*
+      - .pub-cache/**/*
