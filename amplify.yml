@@ -3,7 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
-        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+        - test -d flutter || git clone https://github.com/flutter/flutter.git -b stable --depth 1
         - export PATH="$PWD/flutter/bin:$PATH"
         - flutter --version
         - flutter pub get
