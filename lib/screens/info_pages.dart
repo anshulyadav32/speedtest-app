@@ -184,7 +184,7 @@ class InfoPages {
         title: 'ABOUT',
         subtitle: 'NETSPEED — KNOW YOUR CONNECTION',
         icon: Icons.bolt_rounded,
-        accentColor: AppColors.cyan,
+        accentColor: AppColors.accent,
         sections: const [
           _Section(
             'WHAT IS NETSPEED?',
