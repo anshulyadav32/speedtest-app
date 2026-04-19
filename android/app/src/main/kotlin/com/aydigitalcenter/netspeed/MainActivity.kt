@@ -1,4 +1,4 @@
-package com.example.netspeed
+package com.aydigitalcenter.netspeed
 
 import io.flutter.embedding.android.FlutterActivity
 
