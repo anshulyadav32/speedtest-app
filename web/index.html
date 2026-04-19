@@ -31,6 +31,40 @@
 
   <title>netspeed</title>
   <link rel="manifest" href="manifest.json">
+  <!-- WebRTC-based local IP discovery -->
+  <script>
+    function getLocalIP() {
+      return new Promise(function(resolve) {
+        var pc = new RTCPeerConnection({ iceServers: [] });
+        var localIPs = {};
+        pc.createDataChannel('');
+        pc.createOffer().then(function(offer) {
+          return pc.setLocalDescription(offer);
+        }).catch(function() { resolve('--'); });
+        pc.onicecandidate = function(ice) {
+          if (!ice || !ice.candidate || !ice.candidate.candidate) {
+            var ips = Object.keys(localIPs);
+            pc.close();
+            resolve(ips.length > 0 ? ips[0] : '--');
+            return;
+          }
+          var candidate = ice.candidate.candidate;
+          var ipMatch = candidate.match(
+            /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(([a-f0-9]{1,4}:){7}[a-f0-9]{1,4})/i
+          );
+          if (ipMatch) {
+            var ip = ipMatch[0];
+            if (!localIPs[ip]) localIPs[ip] = true;
+          }
+        };
+        setTimeout(function() {
+          var ips = Object.keys(localIPs);
+          pc.close();
+          resolve(ips.length > 0 ? ips[0] : '--');
+        }, 2000);
+      });
+    }
+  </script>
 </head>
 <body>
   <!--

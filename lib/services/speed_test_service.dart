@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import '../models/network_details.dart';
+import 'local_ip_stub.dart'
+    if (dart.library.js_interop) 'local_ip_web.dart';
 
 export '../models/network_details.dart';
 
@@ -184,8 +186,10 @@ class SpeedTestService extends ChangeNotifier {
         deviceName = i.name;
       }
 
-      // Private/local IP (only available on native platforms)
-      if (!kIsWeb) {
+      // Private/local IP
+      if (kIsWeb) {
+        privateIP = await getWebLocalIP();
+      } else {
         try {
           final networkInfo = NetworkInfo();
           privateIP = await networkInfo.getWifiIP() ?? '--';
