@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netspeed/services/speed_test_service.dart';
+import 'package:net_speed_test/services/speed_test_service.dart';
 
 void main() {
   group('SpeedTestService Tests', () {

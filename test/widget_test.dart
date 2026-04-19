@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:netspeed/main.dart';
-import 'package:netspeed/services/speed_test_service.dart';
+import 'package:net_speed_test/main.dart';
+import 'package:net_speed_test/services/speed_test_service.dart';
 
 void main() {
   testWidgets('NetSpeed App Smoke Test', (WidgetTester tester) async {

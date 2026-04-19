@@ -1,6 +1,6 @@
 {
-    "name": "netspeed",
-    "short_name": "netspeed",
+    "name": "NET Speed Test",
+    "short_name": "NET Speed Test",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0B0B1A",

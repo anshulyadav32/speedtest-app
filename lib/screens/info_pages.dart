@@ -182,21 +182,21 @@ class InfoPages {
   // ── About ──────────────────────────────────────────────────────────────────
   static InfoPage aboutPage() => InfoPage(
         title: 'ABOUT',
-        subtitle: 'NETSPEED — KNOW YOUR CONNECTION',
+        subtitle: 'NET Speed Test — KNOW YOUR CONNECTION',
         icon: Icons.bolt_rounded,
         accentColor: AppColors.accent,
         sections: const [
           _Section(
-            'WHAT IS NETSPEED?',
-            'NETSPEED is a high-fidelity internet speed test application built with Flutter. It provides accurate, real-time measurements of your connection\'s latency, download speed, and upload speed — beautifully visualized.',
+            'WHAT IS NET Speed Test?',
+            'NET Speed Test is a high-fidelity internet speed test application built with Flutter. It provides accurate, real-time measurements of your connection\'s latency, download speed, and upload speed — beautifully visualized.',
           ),
           _Section(
             'HOW IT WORKS',
-            'NETSPEED measures your idle ping by timing round-trips to reference servers. Download and upload speeds are calculated by transferring test payloads and measuring throughput over a consistent duration.',
+            'NET Speed Test measures your idle ping by timing round-trips to reference servers. Download and upload speeds are calculated by transferring test payloads and measuring throughput over a consistent duration.',
           ),
           _Section(
             'OUR MISSION',
-            'We believe everyone deserves transparent insight into their digital connectivity. NETSPEED is designed to give you professional-grade network diagnostics in a clean, accessible interface — no clutter, no subscriptions.',
+            'We believe everyone deserves transparent insight into their digital connectivity. NET Speed Test is designed to give you professional-grade network diagnostics in a clean, accessible interface — no clutter, no subscriptions.',
           ),
           _Section(
             'TECHNOLOGY',
@@ -214,7 +214,7 @@ class InfoPages {
         sections: const [
           _Section(
             'OUR COMMITMENT',
-            'At NETSPEED, your privacy is a priority. This policy explains what data is processed when you use the app and how it is handled.',
+            'At NET Speed Test, your privacy is a priority. This policy explains what data is processed when you use the app and how it is handled.',
           ),
           _Section(
             '1. DATA WE PROCESS',
@@ -248,15 +248,15 @@ class InfoPages {
         sections: const [
           _Section(
             'AGREEMENT',
-            'By accessing or using NETSPEED, you agree to be bound by these Terms. If you do not agree, please discontinue use of the application immediately.',
+            'By accessing or using NET Speed Test, you agree to be bound by these Terms. If you do not agree, please discontinue use of the application immediately.',
           ),
           _Section(
             '1. SERVICE USAGE',
-            'NETSPEED is provided "as is" for personal, non-commercial use. Speed measurements are indicative and may be affected by device capabilities, network congestion, and other external factors outside our control.',
+            'NET Speed Test is provided "as is" for personal, non-commercial use. Speed measurements are indicative and may be affected by device capabilities, network congestion, and other external factors outside our control.',
           ),
           _Section(
             '2. ACCURACY DISCLAIMER',
-            'Results displayed are estimates based on test conditions at the time of measurement. NETSPEED does not guarantee that results reflect the maximum or average performance of your internet plan.',
+            'Results displayed are estimates based on test conditions at the time of measurement. NET Speed Test does not guarantee that results reflect the maximum or average performance of your internet plan.',
           ),
           _Section(
             '3. PROHIBITED CONDUCT',
@@ -264,7 +264,7 @@ class InfoPages {
           ),
           _Section(
             '4. LIMITATION OF LIABILITY',
-            'To the fullest extent permitted by law, NETSPEED and its developers shall not be liable for any indirect, incidental, or consequential damages arising from use or inability to use this service.',
+            'To the fullest extent permitted by law, NET Speed Test and its developers shall not be liable for any indirect, incidental, or consequential damages arising from use or inability to use this service.',
           ),
           _Section(
             '5. CHANGES TO TERMS',

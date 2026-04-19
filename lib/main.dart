@@ -21,7 +21,7 @@ class NetSpeedApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'NetSpeed',
+      title: 'NET Speed Test',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,

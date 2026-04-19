@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="netspeed"
+        android:label="NET Speed Test"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

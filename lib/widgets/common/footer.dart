@@ -33,7 +33,7 @@ class AppFooter extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '© 2024 NETSPEED. ALL RIGHTS RESERVED.',
+            '© 2024 NET Speed Test. ALL RIGHTS RESERVED.',
             style: TextStyle(
               color: AppColors.textSecondary.withOpacity(0.5),
               fontSize: 10,

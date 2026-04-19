@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen>
           SvgPicture.asset('assets/logo.svg', height: 28, width: 28),
           const SizedBox(width: 10),
           const Text(
-            'NETSPEED',
+            'NET Speed Test',
             style: TextStyle(
               fontWeight: FontWeight.w900,
               letterSpacing: 2.5,
