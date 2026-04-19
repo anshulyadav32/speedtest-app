@@ -25,11 +25,13 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: "launcher_icon"
-  ios: false
-  image_path: "assets/logo.png"
+  ios: true
+  macos:
+    generate: true
+  image_path: "assets/app_icon.png"
   web:
     generate: true
-    image_path: "assets/logo.png"
+    image_path: "assets/app_icon.png"
     background_color: "#0B0B1A"
     theme_color: "#00E5FF"
 
@@ -37,3 +39,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.svg
+    - assets/app_icon.png
