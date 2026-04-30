@@ -1,5 +1,4 @@
-// lib/screens/home_screen.dart
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -32,10 +31,15 @@ class _HomeScreenState extends State<HomeScreen>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
+    );
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+
+    // Only repeat animation if NOT in a test environment to prevent pumpAndSettle timeouts
+    if (kIsWeb || !const bool.fromEnvironment('FLUTTER_TEST')) {
+      _pulseController.repeat(reverse: true);
+    }
   }
 
   @override

@@ -57,6 +57,7 @@ class InfoPage extends StatelessWidget {
       backgroundColor: AppColors.background,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary, size: 20),
+        tooltip: 'Back',
         onPressed: () => Navigator.pop(context),
       ),
       flexibleSpace: FlexibleSpaceBar(
