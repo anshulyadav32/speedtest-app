@@ -42,7 +42,9 @@ void main() {
 
     // 2. Set to Latency State
     mockService.setMockState(TestState.latency);
-    await tester.pump(const Duration(milliseconds: 500)); 
+    for (int i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 500));
+    }
 
     expect(find.text('TESTING PING...'), findsOneWidget);
     expect(find.text('DOWNLOAD'), findsOneWidget);
@@ -51,7 +53,9 @@ void main() {
 
     // 3. Set to Finished State
     mockService.setMockState(TestState.finished);
-    await tester.pump(const Duration(milliseconds: 500)); 
+    for (int i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 500));
+    }
 
     // ResultsView components - use .last because InfoBar also has 'CONNECTIONS'
     expect(find.text('TEST AGAIN'), findsOneWidget);

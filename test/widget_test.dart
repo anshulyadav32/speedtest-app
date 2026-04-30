@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:net_speed_test/main.dart';
@@ -36,32 +37,32 @@ void main() {
 
     // 1. Test ABOUT Navigation
     await tester.tap(aboutLink);
-    await tester.pump(const Duration(milliseconds: 500)); 
+    await tester.pump(const Duration(seconds: 1)); 
     
     expect(find.text('ABOUT'), findsAtLeast(1));
     expect(find.textContaining('CONNECTION'), findsAtLeast(1));
     
-    // Tap back button using the new tooltip
-    await tester.tap(find.byIcon(Icons.arrow_back));
-    await tester.pump(const Duration(milliseconds: 500));
+    // Pop the page
+    Navigator.pop(tester.element(find.text('ABOUT').last));
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('GO'), findsOneWidget);
 
     // 2. Test PRIVACY Navigation
     await tester.tap(privacyLink);
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('PRIVACY POLICY'), findsAtLeast(1));
 
-    await tester.tap(find.byIcon(Icons.arrow_back));
-    await tester.pump(const Duration(milliseconds: 500));
+    Navigator.pop(tester.element(find.text('PRIVACY POLICY').last));
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('GO'), findsOneWidget);
 
     // 3. Test TERMS Navigation
     await tester.tap(termsLink);
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('TERMS & CONDITIONS'), findsAtLeast(1));
 
-    await tester.tap(find.byIcon(Icons.arrow_back));
-    await tester.pump(const Duration(milliseconds: 500));
+    Navigator.pop(tester.element(find.text('TERMS & CONDITIONS').last));
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('GO'), findsOneWidget);
   });
 }

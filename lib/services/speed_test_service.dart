@@ -41,7 +41,9 @@ class SpeedTestService extends ChangeNotifier {
 
   final Random _random = Random();
 
-  SpeedTestService() {
+  final http.Client _client;
+
+  SpeedTestService({http.Client? client}) : _client = client ?? http.Client() {
     fetchNetworkDetails();
   }
 
@@ -88,7 +90,7 @@ class SpeedTestService extends ChangeNotifier {
     for (int i = 0; i < 5; i++) {
       final stopwatch = Stopwatch()..start();
       try {
-        await http.get(Uri.parse(url)).timeout(const Duration(seconds: 2));
+        await _client.get(Uri.parse(url)).timeout(const Duration(seconds: 2));
         pings.add(stopwatch.elapsedMilliseconds);
       } catch (_) {
         pings.add(80 + _random.nextInt(40));
@@ -200,13 +202,13 @@ class SpeedTestService extends ChangeNotifier {
 
       // Fetch IPv4, IPv6, geo in parallel
       final responses = await Future.wait([
-        http.get(Uri.parse('https://api4.ipify.org?format=json'))
+        _client.get(Uri.parse('https://api4.ipify.org?format=json'))
             .timeout(const Duration(seconds: 5))
             .catchError((_) => http.Response('{"ip":"--"}', 200)),
-        http.get(Uri.parse('https://api6.ipify.org?format=json'))
+        _client.get(Uri.parse('https://api6.ipify.org?format=json'))
             .timeout(const Duration(seconds: 5))
             .catchError((_) => http.Response('{"ip":"--"}', 200)),
-        http.get(Uri.parse('https://ipapi.co/json/'),
+        _client.get(Uri.parse('https://ipapi.co/json/'),
                 headers: {'Accept': 'application/json'})
             .timeout(const Duration(seconds: 6))
             .catchError((_) => http.Response('{}', 200)),
