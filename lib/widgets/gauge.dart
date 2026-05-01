@@ -13,53 +13,59 @@ class SpeedGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: 320,
-          height: 220,
-          child: CustomPaint(
-            painter: GaugePainter(
-              speed: speed,
-              maxSpeed: maxSpeed,
-              accentColor: const Color(0xFF00E5FF),
-              glowColor: const Color(0xFF00E5FF).withOpacity(0.5),
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: const Alignment(0, 0.4),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        speed.toStringAsFixed(1),
-                        style: const TextStyle(
-                          fontSize: 64,
-                          fontWeight: FontWeight.w900,
-                          fontFamily: 'Montserrat',
-                          letterSpacing: -2,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'Mbps',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withOpacity(0.5),
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ],
-                  ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double gaugeWidth = constraints.maxWidth.clamp(200.0, 360.0);
+        final double gaugeHeight = gaugeWidth * (220 / 320);
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: gaugeWidth,
+              height: gaugeHeight,
+              child: CustomPaint(
+                painter: GaugePainter(
+                  speed: speed,
+                  maxSpeed: maxSpeed,
+                  accentColor: const Color(0xFF00E5FF),
+                  glowColor: const Color(0xFF00E5FF).withOpacity(0.5),
                 ),
-              ],
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: const Alignment(0, 0.4),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            speed.toStringAsFixed(1),
+                            style: TextStyle(
+                              fontSize: gaugeWidth * 0.2,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: 'Montserrat',
+                              letterSpacing: -2,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Mbps',
+                            style: TextStyle(
+                              fontSize: gaugeWidth * 0.05,
+                              color: Colors.white.withOpacity(0.5),
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
@@ -82,7 +88,7 @@ class GaugePainter extends CustomPainter {
     final double radius = size.width / 2;
     final Offset center = Offset(size.width / 2, size.height - 20);
     final Rect arcRect = Rect.fromCircle(center: center, radius: radius - 30);
-    
+
     // 1. Background arc track
     final Paint trackPaint = Paint()
       ..color = const Color(0xFF16162D).withOpacity(0.5)
@@ -94,7 +100,7 @@ class GaugePainter extends CustomPainter {
 
     // 2. Subtle outer glow for the active part
     final double sweepAngle = (speed / maxSpeed).clamp(0.0, 1.0) * pi;
-    
+
     if (speed > 0.1) {
       final Paint glowPaint = Paint()
         ..color = glowColor
@@ -127,26 +133,32 @@ class GaugePainter extends CustomPainter {
       final double angle = pi + (i / 10) * pi;
       final double innerR = radius - 55;
       final double outerR = radius - 45;
-      
+
       canvas.drawLine(
-        Offset(center.dx + innerR * cos(angle), center.dy + innerR * sin(angle)),
-        Offset(center.dx + outerR * cos(angle), center.dy + outerR * sin(angle)),
-        markerPaint..color = (i / 10 * maxSpeed <= speed) ? accentColor : Colors.white.withOpacity(0.2),
+        Offset(
+            center.dx + innerR * cos(angle), center.dy + innerR * sin(angle)),
+        Offset(
+            center.dx + outerR * cos(angle), center.dy + outerR * sin(angle)),
+        markerPaint
+          ..color = (i / 10 * maxSpeed <= speed)
+              ? accentColor
+              : Colors.white.withOpacity(0.2),
       );
     }
 
     // 5. High-fidelity Needle
     final double needleAngle = pi + sweepAngle;
-    
+
     // Needle shadow
     final Paint shadowPaint = Paint()
       ..color = Colors.black.withOpacity(0.5)
       ..strokeWidth = 4
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
-    
+
     canvas.drawLine(
       center,
-      Offset(center.dx + (radius - 40) * cos(needleAngle) + 2, center.dy + (radius - 40) * sin(needleAngle) + 2),
+      Offset(center.dx + (radius - 40) * cos(needleAngle) + 2,
+          center.dy + (radius - 40) * sin(needleAngle) + 2),
       shadowPaint,
     );
 
@@ -162,7 +174,7 @@ class GaugePainter extends CustomPainter {
     );
 
     canvas.drawLine(center, needleEnd, needlePaint);
-    
+
     // Center hub
     canvas.drawCircle(center, 12, Paint()..color = const Color(0xFF16162D));
     canvas.drawCircle(center, 8, Paint()..color = accentColor);

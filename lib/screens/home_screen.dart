@@ -69,23 +69,29 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: _buildAppBar(),
       body: Consumer<SpeedTestService>(
         builder: (context, service, _) {
-          return Column(
-            children: [
-              InfoBar(details: service.details),
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 400),
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
-                  child: _buildBody(service),
-                ),
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: Column(
+                children: [
+                  InfoBar(details: service.details),
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      transitionBuilder: (child, animation) =>
+                          FadeTransition(opacity: animation, child: child),
+                      child: _buildBody(service),
+                    ),
+                  ),
+                  AppFooter(
+                    onAboutTap: () => _navigateToInfo(InfoPages.aboutPage()),
+                    onPrivacyTap: () =>
+                        _navigateToInfo(InfoPages.privacyPage()),
+                    onTermsTap: () => _navigateToInfo(InfoPages.termsPage()),
+                  ),
+                ],
               ),
-              AppFooter(
-                onAboutTap: () => _navigateToInfo(InfoPages.aboutPage()),
-                onPrivacyTap: () => _navigateToInfo(InfoPages.privacyPage()),
-                onTermsTap: () => _navigateToInfo(InfoPages.termsPage()),
-              ),
-            ],
+            ),
           );
         },
       ),
@@ -94,12 +100,12 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildBody(SpeedTestService service) {
     return switch (service.state) {
-      TestState.idle     => GoButton(
+      TestState.idle => GoButton(
           pulseAnimation: _pulseAnimation,
           onTap: service.runTest,
         ),
       TestState.finished => ResultsView(service: service),
-      _                  => RunningView(service: service),
+      _ => RunningView(service: service),
     };
   }
 
