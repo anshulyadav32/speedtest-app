@@ -144,7 +144,8 @@ class _HomeScreenState extends State<HomeScreen>
           onPressed: () async {
             await context.read<AuthService>().signOut();
             if (mounted) {
-              Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/login', (route) => false);
             }
           },
           child: const Text('SIGN OUT',

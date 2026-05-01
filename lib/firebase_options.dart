@@ -32,40 +32,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR_WEB_API_KEY',
-    appId: 'YOUR_WEB_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    measurementId: 'YOUR_MEASUREMENT_ID',
+    apiKey: 'AIzaSyBIPgV5oMjpZQIbsw0WwsQk0QyKcNUm-CI',
+    appId: '1:95966258163:web:8e4f4152007cac299ae886',
+    messagingSenderId: '95966258163',
+    projectId: 'device-streaming-9621025c',
+    authDomain: 'device-streaming-9621025c.firebaseapp.com',
+    storageBucket: 'device-streaming-9621025c.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_ANDROID_API_KEY',
-    appId: 'YOUR_ANDROID_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyCbf6MQOLv98sTVW2r4qkW2sThiLQXv8kk',
+    appId: '1:95966258163:android:03f5f34d1bfa2a719ae886',
+    messagingSenderId: '95966258163',
+    projectId: 'device-streaming-9621025c',
+    storageBucket: 'device-streaming-9621025c.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR_IOS_API_KEY',
-    appId: 'YOUR_IOS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com',
-    iosBundleId: 'com.anshulyadav.netspeed',
+    apiKey: 'AIzaSyD2PPGPGGKYqYzh31kzrHjMqXar-n4MIjI',
+    appId: '1:95966258163:ios:9e7e6e0d92c35a399ae886',
+    messagingSenderId: '95966258163',
+    projectId: 'device-streaming-9621025c',
+    storageBucket: 'device-streaming-9621025c.firebasestorage.app',
+    iosBundleId: 'com.aydigitalcentre.netspeedpro',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'YOUR_MACOS_API_KEY',
-    appId: 'YOUR_MACOS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    iosClientId: 'YOUR_MACOS_CLIENT_ID.apps.googleusercontent.com',
-    iosBundleId: 'com.anshulyadav.netspeed.macos',
+    apiKey: 'AIzaSyD2PPGPGGKYqYzh31kzrHjMqXar-n4MIjI',
+    appId: '1:95966258163:ios:f352724887dfd07b9ae886',
+    messagingSenderId: '95966258163',
+    projectId: 'device-streaming-9621025c',
+    storageBucket: 'device-streaming-9621025c.firebasestorage.app',
+    iosBundleId: 'com.aydigitalcentre.speedest',
   );
+
 }

@@ -38,9 +38,9 @@ class NetSpeedApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF0B0B1A),
         textTheme: GoogleFonts.interTextTheme(
           ThemeData.dark().textTheme.apply(
-            bodyColor: Colors.white,
-            displayColor: Colors.white,
-          ),
+                bodyColor: Colors.white,
+                displayColor: Colors.white,
+              ),
         ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF00E5FF),
@@ -90,4 +90,3 @@ class AuthGate extends StatelessWidget {
     );
   }
 }
-

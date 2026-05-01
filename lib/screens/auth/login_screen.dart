@@ -54,6 +54,28 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await _authService.signInWithGoogle();
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   void _showForgotPasswordDialog() {
     showDialog(
       context: context,
@@ -171,11 +193,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                  borderSide:
+                      const BorderSide(color: AppColors.accent, width: 2),
                 ),
                 filled: true,
                 fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -205,11 +229,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                  borderSide:
+                      const BorderSide(color: AppColors.accent, width: 2),
                 ),
                 filled: true,
                 fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
             if (_errorMessage != null) ...[
@@ -219,7 +245,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFFF6B6B).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFFF6B6B).withOpacity(0.3)),
+                  border: Border.all(
+                      color: const Color(0xFFFF6B6B).withOpacity(0.3)),
                 ),
                 child: Text(
                   _errorMessage!,
@@ -250,7 +277,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.background),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.background),
                         ),
                       )
                     : const Text(
@@ -305,6 +333,34 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
             const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton.icon(
+                onPressed: _isLoading ? null : _handleGoogleSignIn,
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.white.withOpacity(0.2)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.g_mobiledata_rounded,
+                  color: AppColors.textPrimary,
+                  size: 28,
+                ),
+                label: const Text(
+                  'CONTINUE WITH GOOGLE',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             // Sign up link
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -317,7 +373,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: _isLoading ? null : () => Navigator.pushNamed(context, '/signup'),
+                  onTap: _isLoading
+                      ? null
+                      : () => Navigator.pushNamed(context, '/signup'),
                   child: const Text(
                     'Sign Up',
                     style: TextStyle(

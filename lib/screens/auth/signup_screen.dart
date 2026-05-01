@@ -138,11 +138,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                  borderSide:
+                      const BorderSide(color: AppColors.accent, width: 2),
                 ),
                 filled: true,
                 fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
             const SizedBox(height: 16),
@@ -169,11 +171,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                  borderSide:
+                      const BorderSide(color: AppColors.accent, width: 2),
                 ),
                 filled: true,
                 fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -202,11 +206,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                  borderSide:
+                      const BorderSide(color: AppColors.accent, width: 2),
                 ),
                 filled: true,
                 fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
             const SizedBox(height: 16),
@@ -234,11 +240,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                  borderSide:
+                      const BorderSide(color: AppColors.accent, width: 2),
                 ),
                 filled: true,
                 fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
             if (_errorMessage != null) ...[
@@ -248,7 +256,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFFF6B6B).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFFF6B6B).withOpacity(0.3)),
+                  border: Border.all(
+                      color: const Color(0xFFFF6B6B).withOpacity(0.3)),
                 ),
                 child: Text(
                   _errorMessage!,
@@ -279,7 +288,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         width: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.background),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.background),
                         ),
                       )
                     : const Text(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95966258163",
+    "project_id": "device-streaming-9621025c",
+    "storage_bucket": "device-streaming-9621025c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95966258163:android:03f5f34d1bfa2a719ae886",
+        "android_client_info": {
+          "package_name": "com.aydigitalcentre.net_speed_pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbf6MQOLv98sTVW2r4qkW2sThiLQXv8kk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
