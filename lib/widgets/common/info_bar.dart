@@ -29,7 +29,7 @@ class InfoBar extends StatelessWidget {
         spacing: 0,
         runSpacing: 8,
         children: [
-          InfoBarTile(
+          const InfoBarTile(
             label: 'CONNECTIONS',
             value: 'Multi',
             icon: Icons.swap_horiz_rounded,

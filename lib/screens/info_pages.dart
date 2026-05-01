@@ -181,12 +181,12 @@ class _SectionCard extends StatelessWidget {
 
 class InfoPages {
   // ── About ──────────────────────────────────────────────────────────────────
-  static InfoPage aboutPage() => InfoPage(
+  static InfoPage aboutPage() => const InfoPage(
         title: 'ABOUT',
         subtitle: 'NET Speed Test — KNOW YOUR CONNECTION',
         icon: Icons.bolt_rounded,
         accentColor: AppColors.accent,
-        sections: const [
+        sections: [
           _Section(
             'WHAT IS NET Speed Test?',
             'NET Speed Test is a high-fidelity internet speed test application built with Flutter. It provides accurate, real-time measurements of your connection\'s latency, download speed, and upload speed — beautifully visualized.',
@@ -207,12 +207,12 @@ class InfoPages {
       );
 
   // ── Privacy Policy ─────────────────────────────────────────────────────────
-  static InfoPage privacyPage() => InfoPage(
+  static InfoPage privacyPage() => const InfoPage(
         title: 'PRIVACY POLICY',
         subtitle: 'LAST UPDATED: APRIL 2025',
         icon: Icons.shield_rounded,
-        accentColor: const Color(0xFF00C853),
-        sections: const [
+        accentColor: Color(0xFF00C853),
+        sections: [
           _Section(
             'OUR COMMITMENT',
             'At NET Speed Test, your privacy is a priority. This policy explains what data is processed when you use the app and how it is handled.',
@@ -241,12 +241,12 @@ class InfoPages {
       );
 
   // ── Terms & Conditions ─────────────────────────────────────────────────────
-  static InfoPage termsPage() => InfoPage(
+  static InfoPage termsPage() => const InfoPage(
         title: 'TERMS & CONDITIONS',
         subtitle: 'LAST UPDATED: APRIL 2025',
         icon: Icons.gavel_rounded,
-        accentColor: const Color(0xFFFF6D00),
-        sections: const [
+        accentColor: Color(0xFFFF6D00),
+        sections: [
           _Section(
             'AGREEMENT',
             'By accessing or using NET Speed Test, you agree to be bound by these Terms. If you do not agree, please discontinue use of the application immediately.',
