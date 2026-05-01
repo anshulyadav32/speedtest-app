@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import '../core/constants/app_colors.dart';
 import '../services/speed_test_service.dart';
+import '../services/auth_service.dart';
 import '../widgets/common/info_bar.dart';
 import '../widgets/common/footer.dart';
 import '../widgets/idle/go_button.dart';
@@ -138,6 +139,16 @@ class _HomeScreenState extends State<HomeScreen>
           onPressed: () {},
           child: const Text('ANALYSIS',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+        ),
+        TextButton(
+          onPressed: () async {
+            await context.read<AuthService>().signOut();
+            if (mounted) {
+              Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+            }
+          },
+          child: const Text('SIGN OUT',
+              style: TextStyle(color: Color(0xFFFF6B6B), fontSize: 12)),
         ),
         const SizedBox(width: 8),
       ],
