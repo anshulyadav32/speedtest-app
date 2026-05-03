@@ -28,7 +28,8 @@ class GoButton extends StatelessWidget {
           56.0,
           200.0,
         );
-    final effectivePulse = compactLayout ? const AlwaysStoppedAnimation(1.0) : pulseAnimation;
+    final effectivePulse =
+        compactLayout ? const AlwaysStoppedAnimation(1.0) : pulseAnimation;
     final showSubtitle = availableHeight > 240;
 
     return Center(

@@ -83,9 +83,9 @@ class _HomeScreenState extends State<HomeScreen>
                           duration: const Duration(milliseconds: 400),
                           transitionBuilder: (child, animation) =>
                               FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              ),
+                            opacity: animation,
+                            child: child,
+                          ),
                           child: _buildBody(
                             service,
                             bodyConstraints.maxHeight,

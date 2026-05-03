@@ -1,18 +1,43 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_core/firebase_core.dart';
+import '../firebase_options.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final GoogleSignIn? _googleSignIn = kIsWeb ? null : GoogleSignIn();
+  static bool _firebaseInitialized = false;
+
+  FirebaseAuth get _auth => FirebaseAuth.instance;
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
 
   /// Stream of auth state changes
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   /// Get current user
-  User? get currentUser => _auth.currentUser;
+  User? get currentUser {
+    try {
+      return _auth.currentUser;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _ensureFirebaseInitialized() async {
+    if (_firebaseInitialized) return;
+
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } on FirebaseException catch (e) {
+      // already-initialized is safe to ignore when hot-restarting/reloading
+      if (e.code != 'duplicate-app') {
+        rethrow;
+      }
+    }
+
+    _firebaseInitialized = true;
+  }
 
   /// Sign up with email and password
   Future<User?> signUp({
@@ -21,6 +46,7 @@ class AuthService {
     required String displayName,
   }) async {
     try {
+      await _ensureFirebaseInitialized();
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -54,6 +80,7 @@ class AuthService {
     required String password,
   }) async {
     try {
+      await _ensureFirebaseInitialized();
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -67,27 +94,15 @@ class AuthService {
   /// Sign in with Google (web + mobile)
   Future<User?> signInWithGoogle() async {
     try {
-      UserCredential userCredential;
-
-      if (kIsWeb) {
-        final provider = GoogleAuthProvider();
-        provider.addScope('email');
-        provider.setCustomParameters({'prompt': 'select_account'});
-        userCredential = await _auth.signInWithPopup(provider);
-      } else {
-        final googleUser = await _googleSignIn!.signIn();
-        if (googleUser == null) {
-          return null;
-        }
-
-        final googleAuth = await googleUser.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        userCredential = await _auth.signInWithCredential(credential);
+      await _ensureFirebaseInitialized();
+      if (!kIsWeb) {
+        throw 'Google sign-in is currently available on web only.';
       }
+
+      final provider = GoogleAuthProvider();
+      provider.addScope('email');
+      provider.setCustomParameters({'prompt': 'select_account'});
+      final userCredential = await _auth.signInWithPopup(provider);
 
       final user = userCredential.user;
       if (user != null) {
@@ -112,13 +127,14 @@ class AuthService {
 
   /// Sign out
   Future<void> signOut() async {
-    await _googleSignIn?.signOut();
+    await _ensureFirebaseInitialized();
     await _auth.signOut();
   }
 
   /// Reset password
   Future<void> resetPassword(String email) async {
     try {
+      await _ensureFirebaseInitialized();
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       throw _getErrorMessage(e.code);
@@ -128,6 +144,7 @@ class AuthService {
   /// Get user stats from Firestore
   Future<Map<String, dynamic>?> getUserStats(String uid) async {
     try {
+      await _ensureFirebaseInitialized();
       final doc = await _firestore.collection('users').doc(uid).get();
       return doc.data();
     } catch (e) {
@@ -138,6 +155,7 @@ class AuthService {
   /// Update test count after speed test
   Future<void> updateTestCount(String uid) async {
     try {
+      await _ensureFirebaseInitialized();
       await _firestore.collection('users').doc(uid).update({
         'testCount': FieldValue.increment(1),
         'lastTestDate': FieldValue.serverTimestamp(),
