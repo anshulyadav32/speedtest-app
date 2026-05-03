@@ -1,4 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
+import { verifyToken, extractTokenFromHeader } from '@/lib/auth/jwt'
+import { findUserById } from '@/lib/auth/db'
 
 interface SpeedTestRequest {
   location?: string
@@ -10,11 +12,24 @@ interface SpeedTestResponse {
   ping: number
   timestamp: string
   location?: string
+  userId?: string
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as SpeedTestRequest
+
+    // Try to get user info from token (optional)
+    let userId: string | undefined
+    const authHeader = request.headers.get('authorization')
+    const token = extractTokenFromHeader(authHeader)
+
+    if (token) {
+      const payload = verifyToken(token)
+      if (payload) {
+        userId = payload.userId
+      }
+    }
 
     // Mock speed test data
     const response: SpeedTestResponse = {
@@ -23,6 +38,7 @@ export async function POST(request: NextRequest) {
       ping: Math.floor(Math.random() * 50),
       timestamp: new Date().toISOString(),
       location: body.location || 'Unknown',
+      userId,
     }
 
     return NextResponse.json(response, { status: 200 })
