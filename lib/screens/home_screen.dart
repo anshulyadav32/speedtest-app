@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen>
             }
           },
           child: Text(
-            user == null ? 'SIGN IN' : 'SIGN OUT',
+            user == null ? 'LOGIN' : 'SIGN OUT',
             style: TextStyle(
               color: user == null
                   ? AppColors.textPrimary
