@@ -77,11 +77,21 @@ class _HomeScreenState extends State<HomeScreen>
                 children: [
                   InfoBar(details: service.details),
                   Expanded(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 400),
-                      transitionBuilder: (child, animation) =>
-                          FadeTransition(opacity: animation, child: child),
-                      child: _buildBody(service),
+                    child: LayoutBuilder(
+                      builder: (context, bodyConstraints) {
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                          child: _buildBody(
+                            service,
+                            bodyConstraints.maxHeight,
+                          ),
+                        );
+                      },
                     ),
                   ),
                   AppFooter(
@@ -99,10 +109,11 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildBody(SpeedTestService service) {
+  Widget _buildBody(SpeedTestService service, double availableHeight) {
     return switch (service.state) {
       TestState.idle => GoButton(
           pulseAnimation: _pulseAnimation,
+          availableHeight: availableHeight,
           onTap: service.runTest,
         ),
       TestState.finished => ResultsView(service: service),
@@ -111,20 +122,27 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   AppBar _buildAppBar() {
+    final authService = context.read<AuthService?>();
+    final user = authService?.currentUser;
+
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
       title: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset('assets/logo.svg', height: 28, width: 28),
           const SizedBox(width: 10),
-          const Text(
-            'NET Speed Test',
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2.5,
-              color: AppColors.textPrimary,
-              fontSize: 17,
+          const Flexible(
+            child: Text(
+              'NET Speed Test',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2.5,
+                color: AppColors.textPrimary,
+                fontSize: 17,
+              ),
             ),
           ),
         ],
@@ -142,14 +160,28 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         TextButton(
           onPressed: () async {
-            await context.read<AuthService>().signOut();
+            if (user == null) {
+              if (mounted) {
+                Navigator.of(context).pushNamed('/login');
+              }
+              return;
+            }
+
+            await authService?.signOut();
             if (mounted) {
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login', (route) => false);
+                  .pushNamedAndRemoveUntil('/home', (route) => false);
             }
           },
-          child: const Text('SIGN OUT',
-              style: TextStyle(color: Color(0xFFFF6B6B), fontSize: 12)),
+          child: Text(
+            user == null ? 'SIGN IN' : 'SIGN OUT',
+            style: TextStyle(
+              color: user == null
+                  ? AppColors.textPrimary
+                  : const Color(0xFFFF6B6B),
+              fontSize: 12,
+            ),
+          ),
         ),
         const SizedBox(width: 8),
       ],

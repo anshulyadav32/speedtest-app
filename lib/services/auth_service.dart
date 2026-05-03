@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn? _googleSignIn = kIsWeb ? null : GoogleSignIn();
 
   /// Stream of auth state changes
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -75,7 +75,7 @@ class AuthService {
         provider.setCustomParameters({'prompt': 'select_account'});
         userCredential = await _auth.signInWithPopup(provider);
       } else {
-        final googleUser = await _googleSignIn.signIn();
+        final googleUser = await _googleSignIn!.signIn();
         if (googleUser == null) {
           return null;
         }
@@ -112,7 +112,7 @@ class AuthService {
 
   /// Sign out
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
+    await _googleSignIn?.signOut();
     await _auth.signOut();
   }
 
