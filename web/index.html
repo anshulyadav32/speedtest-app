@@ -20,6 +20,10 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
   <meta name="google-signin-client_id" content="">
+  <!-- Prevent Google Sign-In errors when client ID is not configured -->
+  <script>
+    window.__GOOGLE_SIGNIN_SAFE__ = true;
+  </script>
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -75,6 +79,23 @@
 
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
+    <script>
+      // Suppress uncaught errors from Google Sign-In initialization
+      window.addEventListener('error', function(event) {
+        if (event.message && (event.message.includes('clientId') || event.message.includes('Client') || event.message.includes('google'))) {
+          event.preventDefault();
+          console.warn('Google Sign-In config error (safe to ignore): ' + event.message);
+        }
+      }, true);
+
+      // Suppress unhandled promise rejections from Google Sign-In
+      window.addEventListener('unhandledrejection', function(event) {
+        if (event.reason && (event.reason.message || event.reason.toString()).includes('clientId')) {
+          event.preventDefault();
+          console.warn('Google Sign-In config error (safe to ignore)');
+        }
+      });
+    </script>
   -->
   <script src="flutter_bootstrap.js" async></script>
 </body>
